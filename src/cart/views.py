@@ -2,7 +2,7 @@
 from django.views import generic
 from .utils import get_or_set_order_session 
 from .models import OrderItem, Product
-from .forms import AddToCartForm
+from .forms import AddToCartForm,AddressForm
 from django.shortcuts import get_object_or_404, redirect,reverse
 # Create your views here.
 class ProductListView(generic.ListView):
@@ -52,6 +52,7 @@ class ProductDetailView(generic.FormView):
         context['product'] = self.get_object()
         return context
 
+
 class CartView(generic.TemplateView):
     template_name= 'cart/cart.html'
     def get_context_data(self, *args,**kwargs):
@@ -83,3 +84,11 @@ class RemoveFromCartView(generic.View):
         order_item = get_object_or_404(OrderItem,id= kwargs['pk'])
         order_item.delete()
         return redirect("cart:summary")
+
+class CheckoutView(generic.FormView):
+    template_name= 'cart/checkout.html'
+    form_class = AddressForm
+    def get_context_data(self, **kwargs):
+        context = super(CheckoutView, self).get_context_data(**kwargs)
+        context['order'] = get_or_set_order_session(self.request)
+        return context
