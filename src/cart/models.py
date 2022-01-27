@@ -87,6 +87,26 @@ class Order(models.Model):
     def reference_number(self):
         return f"ORDER-{self.pk}"
 
+    def get_raw_subtotal(self):
+        total=0
+        for order_item in self.items.all():
+            total += order_item.get_raw_total_item_price()
+        return total
+
+    def get_subtotal(self):
+        subtotal= self.get_raw_subtotal()
+        return "{:.2f}".format(subtotal /100)
+
+    def get_raw_total(self):
+        subtotal= self.get_raw_subtotal()
+        #agregar suma de IGV, Delivery, Resto descuentos
+        #total = subtotal - discounts + tax +delivery
+        
+        return subtotal
+
+    def get_total(self):
+        total= self.get_raw_total()
+        return "{:.2f}".format(total /100)
 class Payment(models.Model):
     order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='payments')
     payment_method=models.CharField(max_length=20,choices=(
