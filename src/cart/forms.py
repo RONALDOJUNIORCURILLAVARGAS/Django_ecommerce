@@ -52,7 +52,7 @@ class AddressForm(forms.Form):
     
     def clean(self):
         data=self.cleaned_data
-        selected_shipping_address=data.get('selected_shipping_addtess',None)
+        selected_shipping_address=data.get('selected_shipping_address',None)
         if selected_shipping_address is None:
             if not data.get('shipping_addres_line_1', None):
                 self.add_error("shipping_addres_line_1", "Please fill in this field")
